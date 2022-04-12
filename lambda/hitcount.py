@@ -7,9 +7,22 @@ table = ddb.Table(os.environ['HITS_TABLE_NAME'])
 _lambda = boto3.client('lambda')
 
 def handler(event, context):
-    print('request: {}'.format(json.dumps(event)))
+    # print('request: {}'.format(json.dumps(event)))
+    path = event['path']
+    ip = event['requestContext']['identity']['sourceIp']
+    httpMethod = event['httpMethod']
+
+    globalKey = path + '_' + httpMethod + '_' + 'ALL'
+    ipKey = path + '_' + httpMethod + '_' + ip
+
     table.update_item(
-        Key={'path': event['path']},
+        Key={'path': globalKey},
+        UpdateExpression='ADD hits :incr',
+        ExpressionAttributeValues={':incr': 1}
+    )
+
+    table.update_item(
+        Key={'path': ipKey},
         UpdateExpression='ADD hits :incr',
         ExpressionAttributeValues={':incr': 1}
     )
@@ -21,5 +34,5 @@ def handler(event, context):
 
     body = resp['Payload'].read()
 
-    print('downstream response: {}'.format(body))
+    # print('downstream response: {}'.format(body))
     return json.loads(body)

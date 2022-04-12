@@ -1,43 +1,58 @@
 import json
 
-def generateSeedPhrase(ip):
-    print('generating seedphrase for ' + ip)
+
+def getSeedPhrase(ip):
+    print('getting seedphrase for ' + ip)
     return {
         'statusCode': 200,
         'headers': {
-            'Content-Type': 'text/plain'
+            'Content-Type': 'application/json'
         },
-        'body': "{'seedphrase':'select, sell, seminar'}"
+        'body': '{"seedphrase":"select, sell, seminar, select, sell, seminar, select, sell, seminar, select, sell, seminar"}'
     }
+
+# TODO: pass in json request body
+def generateReport(ip):
+    print('generating seedphrase report for ' + ip)
+    return {
+        'statusCode': 200,
+        'headers': {
+            'Content-Type': 'application/json'
+        },
+        'body': '{"results":[{"publicKey":"1GNgwA8JfG7Kc8akJ8opdNWJUihqUztfPe", "currencyAmount": "965.28794308", "currencySymbol": "BTC"}]}'
+    }
+
+def seedPhrases(httpMethod, ip):
+    return {
+        'GET': getSeedPhrase(ip),
+        'POST': generateReport(ip)
+    }.get(httpMethod, defaultResponse(ip))   
+
 
 def defaultResponse(ip):
     print('Unknown route for ' + ip)
     return {
         'statusCode': 404,
         'headers': {
-            'Content-Type': 'text/plain'
+            'Content-Type': 'application/json'
         },
-        'body': "{'error': 'Unknown route'}"
+        'body': '{"error": "Unknown route"}'
     }
 
-def route_request(path, ip):
+def route_request(path, httpMethod, ip):
     return {
-        '/seedphrases/generate': generateSeedPhrase(ip),
+        '/seedphrases': seedPhrases(httpMethod, ip),
     }.get(path, defaultResponse(ip))   
 
 
-def handler(event_json, context):
-    # print("Type:", type(event))
-    # event_json = json.loads(event)
+def handler(event, context):
+    ip = event['requestContext']['identity']['sourceIp']
+    path = event['path']
+    httpMethod = event['httpMethod']
 
-    ip = event_json['requestContext']['identity']['sourceIp']
-    path = event_json['path']
-
-    print("Type:", type(event_json))
     print("IP:", ip)
     print("path:", path)
+    print("httpMethod:", httpMethod)
 
-    print('request: {}'.format(json.dumps(event_json)))
-
-    return route_request(path, ip)
+    return route_request(path, httpMethod, ip)
 
