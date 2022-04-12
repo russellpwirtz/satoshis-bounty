@@ -2,10 +2,9 @@
 
 import aws_cdk as cdk
 
-from cdk_workshop_python.cdk_workshop_python_stack import CdkWorkshopPythonStack
-
+from satoshis_bounty.satoshis_bounty import SatoshisBounty
 
 app = cdk.App()
-CdkWorkshopPythonStack(app, "cdk-workshop-python")
+SatoshisBounty(app, "satoshis-bounty-python")
 
 app.synth()

@@ -7,32 +7,31 @@ from aws_cdk import (
 )
 from cdk_dynamo_table_view import TableViewer
 
-class CdkWorkshopPythonStack(Stack):
+class SatoshisBounty(Stack):
 
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        # define lambda resource
         my_lambda = _lambda.Function(
-            self, 'HelloHandler',
+            self, 'GenerateSeedPhraseHandler',
             runtime=_lambda.Runtime.PYTHON_3_9,
             code=_lambda.Code.from_asset('lambda'),
-            handler='hello.handler'
+            handler='generate-seed-phrase.handler'
         )
 
-        hello_with_counter = HitCounter(
-            self, 'HelloHitCounter',
+        generate_seed_phrase_with_counter = HitCounter(
+            self, 'SeedPhraseGeneratorHitCounter',
             downstream=my_lambda,
         )
 
         apigw.LambdaRestApi(
             self, 'Endpoint',
-            handler=hello_with_counter._handler,
+            handler=generate_seed_phrase_with_counter._handler,
         )
 
         TableViewer(
-            self, 'ViewHitCounter',
-            title='Hello Hits',
-            table=hello_with_counter.table,
+            self, 'SeedPhraseGenerationViewHitCounter',
+            title='Seed Phrases Generated',
+            table=generate_seed_phrase_with_counter.table,
             sort_by="-hits"
         )
