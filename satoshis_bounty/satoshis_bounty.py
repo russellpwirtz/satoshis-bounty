@@ -16,22 +16,22 @@ class SatoshisBounty(Stack):
             self, 'GenerateSeedPhraseHandler',
             runtime=_lambda.Runtime.PYTHON_3_9,
             code=_lambda.Code.from_asset('lambda'),
-            handler='generate-seed-phrase.handler'
+            handler='generate-seedphrase.handler'
         )
 
-        generate_seed_phrase_with_counter = HitCounter(
+        generate_seedphrase_with_counter = HitCounter(
             self, 'SeedPhraseGeneratorHitCounter',
             downstream=my_lambda,
         )
 
         apigw.LambdaRestApi(
             self, 'Endpoint',
-            handler=generate_seed_phrase_with_counter._handler,
+            handler=generate_seedphrase_with_counter._handler,
         )
 
         TableViewer(
             self, 'SeedPhraseGenerationViewHitCounter',
             title='Seed Phrases Generated',
-            table=generate_seed_phrase_with_counter.table,
+            table=generate_seedphrase_with_counter.table,
             sort_by="-hits"
         )
