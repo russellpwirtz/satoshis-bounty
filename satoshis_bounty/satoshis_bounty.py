@@ -13,25 +13,25 @@ class SatoshisBounty(Stack):
         super().__init__(scope, construct_id, **kwargs)
 
         my_lambda = _lambda.Function(
-            self, 'GenerateSeedPhraseHandler',
+            self, 'ApiController',
             runtime=_lambda.Runtime.PYTHON_3_9,
             code=_lambda.Code.from_asset('lambda'),
-            handler='generate-seedphrase.handler'
+            handler='controller.handler'
         )
 
-        generate_seedphrase_with_counter = HitCounter(
-            self, 'SeedPhraseGeneratorHitCounter',
+        api_controller_with_counter = HitCounter(
+            self, 'ApiControllerHitCounter',
             downstream=my_lambda,
         )
 
         apigw.LambdaRestApi(
             self, 'Endpoint',
-            handler=generate_seedphrase_with_counter._handler,
+            handler=api_controller_with_counter._handler,
         )
 
         TableViewer(
-            self, 'SeedPhraseGenerationViewHitCounter',
-            title='Seed Phrases Generated',
-            table=generate_seedphrase_with_counter.table,
+            self, 'ApiControllerViewHitCounter',
+            title='API calls made',
+            table=api_controller_with_counter.table,
             sort_by="-hits"
         )
