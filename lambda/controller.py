@@ -1,17 +1,34 @@
 import json
+import os
+import csv
+import random
 
+def get_word_list():
+    file = open('seedphrase_word_list.txt')
+    csvreader = csv.reader(file)
+    words = []
+    for row in csvreader:
+        words.append(row[0])
+    return words
 
 def getSeedPhrase(ip):
-    print('getting seedphrase for ' + ip)
+    print('creating new seedphrase for ' + ip)
+
+    words = get_word_list()
+    print("word list: " + str(words))
+
+    seedphrase = set()
+    while (len(seedphrase) < 12):
+        seedphrase.add(random.choice(words))
+
     return {
         'statusCode': 200,
         'headers': {
             'Content-Type': 'application/json'
         },
-        'body': '{"seedphrase":"select, sell, seminar, select, sell, seminar, select, sell, seminar, select, sell, seminar"}'
+        'body': '{"seedphrase":"' + str(seedphrase) + '"}'
     }
 
-# TODO: pass in json request body
 def generateReport(ip):
     print('generating seedphrase report for ' + ip)
     return {
@@ -39,12 +56,6 @@ def defaultResponse(ip):
         'body': '{"error": "Unknown route"}'
     }
 
-def route_request(path, httpMethod, ip):
-    return {
-        '/seedphrases': seedPhrases(httpMethod, ip),
-    }.get(path, defaultResponse(ip))   
-
-
 def handler(event, context):
     ip = event['requestContext']['identity']['sourceIp']
     path = event['path']
@@ -54,5 +65,7 @@ def handler(event, context):
     print("path:", path)
     print("httpMethod:", httpMethod)
 
-    return route_request(path, httpMethod, ip)
+    return {
+        '/seedphrases': seedPhrases(httpMethod, ip),
+    }.get(path, defaultResponse(ip))   
 

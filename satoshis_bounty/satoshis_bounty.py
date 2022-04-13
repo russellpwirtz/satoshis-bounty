@@ -11,12 +11,12 @@ class SatoshisBounty(Stack):
 
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
-
+            
         my_lambda = _lambda.Function(
             self, 'ApiController',
             runtime=_lambda.Runtime.PYTHON_3_9,
             code=_lambda.Code.from_asset('lambda'),
-            handler='controller.handler'
+            handler='controller.handler',
         )
 
         api_controller_with_counter = HitCounter(
