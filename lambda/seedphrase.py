@@ -6,16 +6,19 @@ def get_word_list():
     with open("wordlist/english.txt", "r") as f:
         return [w.strip() for w in f.readlines()]
 
+def generate_entropy():
+    return binascii.unhexlify(str(hex(random.getrandbits(128))).removeprefix('0x').strip())
+
 def generate_seedphrase(wordlist):
     try:
-        data = binascii.unhexlify(str(hex(random.getrandbits(128))).removeprefix('0x').strip())
+        data = generate_entropy()
     except Exception as e: 
         print('[Will retry] Failed to generate seedphrase: '+ str(e)) # TODO fix bug
-        data = binascii.unhexlify(str(hex(random.getrandbits(128))).removeprefix('0x').strip())
+        data = generate_entropy()
 
     if len(data) not in [16, 20, 24, 28, 32]:
         print("[Will retry] Data length should be one of the following: [16, 20, 24, 28, 32], but it is not: " + str(len(data))) # TODO fix bug
-        data = binascii.unhexlify(str(hex(random.getrandbits(128))).removeprefix('0x').strip())
+        data = generate_entropy()
 
     if len(data) not in [16, 20, 24, 28, 32]:
         raise ValueError("Data length should be one of the following: [16, 20, 24, 28, 32], but it is not: " + str(len(data)))
