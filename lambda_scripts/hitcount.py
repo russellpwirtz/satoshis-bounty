@@ -12,17 +12,14 @@ def handler(event, context):
     ip = event['requestContext']['identity']['sourceIp']
     httpMethod = event['httpMethod']
 
-    globalKey = path + '_' + httpMethod + '_' + 'ALL'
-    ipKey = path + '_' + httpMethod + '_' + ip
-
     table.update_item(
-        Key={'path': globalKey},
+        Key={'path': path + '_' + httpMethod},
         UpdateExpression='ADD hits :incr',
         ExpressionAttributeValues={':incr': 1}
     )
 
     table.update_item(
-        Key={'path': ipKey},
+        Key={'path': path + '_' + httpMethod + '_' + ip},
         UpdateExpression='ADD hits :incr',
         ExpressionAttributeValues={':incr': 1}
     )
