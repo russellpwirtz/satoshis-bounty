@@ -1,8 +1,12 @@
 
-# Welcome to your CDK Python project!
+# Welcome to Satoshis Bounty!
 
-You should explore the contents of this project. It demonstrates a CDK app with an instance of a stack (`cdk_workshop_python_stack`)
-which contains an Amazon SQS queue that is subscribed to an Amazon SNS topic.
+This project is a simple python-based AWS CDK application. It contains:
+- API call to generate new seedphrase
+- Frontend webpage to display current stats on API usage
+- Dynamo DB to store hit counter data
+- AWS API Gateway for routing traffic
+- AWS Lambda for backend logic
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
