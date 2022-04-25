@@ -15,7 +15,7 @@ class SatoshisBounty(Stack):
         my_lambda = _lambda.Function(
             self, 'ApiController',
             runtime=_lambda.Runtime.PYTHON_3_9,
-            code=_lambda.Code.from_asset('lambda_scripts'),
+            code=_lambda.Code.from_asset('lambda'),
             handler='controller.handler',
         )
 
